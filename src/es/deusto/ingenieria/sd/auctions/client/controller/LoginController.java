@@ -4,39 +4,51 @@ import java.rmi.RemoteException;
 
 import es.deusto.ingenieria.sd.auctions.client.remote.ServiceLocator;
 
-//This class implements Controller pattern.
-public class LoginController {	
-	
-	//Reference to the Service Locator
-	private ServiceLocator serviceLocator;
-	//This attibute stores the token when login success
-	private long token = -1; //-1 = login has not been done or fails
+public class LoginController {
+private ServiceLocator serviceLocator;
+    
+    private long token = -1; 
 
-	public LoginController(ServiceLocator serviceLocator) {
-		this.serviceLocator = serviceLocator;
-	}
-	
-	public boolean login(String email, String password) {
-		try {
-			this.token = this.serviceLocator.getService().login(email, password);			
-			return true;
-		} catch (RemoteException e) {
-			System.out.println("# Error during login: " + e);
-			this.token = -1;
-			return false;
-		}
-	}
-	
-	public void logout() {
-		try {
-			this.serviceLocator.getService().logout(this.token);
-			this.token = -1;
-		} catch (RemoteException e) {
-			System.out.println("# Error during logout: " + e);
-		}
-	}
+    public LoginController(ServiceLocator serviceLocator) {
+        this.serviceLocator = serviceLocator;
+    }
 
-	public long getToken() {
-		return token;
-	}
+    public boolean loginEmail(String email, String pass) {
+        try {
+            this.token = this.serviceLocator.getService().login(email, pass);
+            return true;
+        } catch (RemoteException e) {
+            System.out.println("# Fallo " + e);
+            this.token = -1;
+            return false;
+        }
+    }
+
+    public boolean loginCuenta(String redireccion){
+        try {
+            this.token = this.serviceLocator.getService().loginExterno(redireccion);
+            return true;
+        } catch (RemoteException e) {
+            System.out.println("# Fallo " + e);
+            this.token = -1;
+            return false;
+        }
+    }
+
+    public void logout() {
+        try {
+            this.serviceLocator.getService().logOut(this.token);
+            this.token = -1;
+        } catch (RemoteException e) {
+            System.out.println("# Fallo " + e);
+        }
+    }
+
+    public long getToken() {
+        return token;
+    }
+
+    public ServiceLocator getServiceLocator() {
+        return serviceLocator;
+    }
 }
